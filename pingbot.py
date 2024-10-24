@@ -21,17 +21,6 @@ URLS = os.environ.get("URLS")
 STATUS = {"timestamp": datetime.now(), "status_codes": {url: None for url in URLS}}
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.job_queue.start()
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="Начинаю опрос сайтов. Запросы будут отправляться каждые 10 минут, "
-             "в случае ошибок напишу об этом. Используйте команду /status для проверки статуса всех сайтов. "
-             "Для остановки мониторинга используйте команду /stop"
-    )
-    context.job_queue.run_repeating(ping, chat_id=update.effective_chat.id, interval=600, first=1)
-
-
 async def ping(context: ContextTypes.DEFAULT_TYPE) -> None:
 
     async def ping_one(url):
@@ -61,23 +50,12 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.job_queue.stop()
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Опрос сайтов остановлен")
-
-
 if __name__ == "__main__":
     application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
 
-    job_queue = application.job_queue
-
-    start_handler = CommandHandler("start", start)
-    application.add_handler(start_handler)
+    job_queue = application.job_queue.run_repeating(ping, interval=600, first=1)
 
     status_handler = CommandHandler("status", status)
     application.add_handler(status_handler)
-
-    stop_handler = CommandHandler("stop", stop)
-    application.add_handler(stop_handler)
 
     application.run_polling()
