@@ -17,7 +17,7 @@ logging.basicConfig(
 load_dotenv()
 
 
-URLS = os.environ.get("URLS")
+URLS = os.environ.get("URLS").split(", ")
 STATUS = {"timestamp": datetime.now(), "status_codes": {url: None for url in URLS}}
 
 
