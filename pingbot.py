@@ -83,7 +83,7 @@ async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 if __name__ == "__main__":
     application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     application.bot_data["subscribers"] = set()
-    application.job_queue.run_repeating(ping, interval=600, first=1)
+    application.job_queue.run_repeating(ping, interval=600, first=15)
 
     status_handler = CommandHandler("status", status)
     application.add_handler(status_handler)
