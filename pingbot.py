@@ -67,11 +67,15 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot_data["subscribers"].remove(update.effective_chat.id)
+    text = "В этот чат больше не будут отправляться уведомления о статусе ссылок"
+    try:
+        await context.bot_data["subscribers"].remove(update.effective_chat.id)
+    except KeyError:
+        text = "Вы не были подписаны на уведомления"
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="В этот чат больше не будут отправляться уведомления о статусе ссылок",
+        text=text,
         disable_web_page_preview=True,
     )
 
