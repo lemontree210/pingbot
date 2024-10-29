@@ -53,7 +53,7 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await context.bot_data["subscribers"].add(update.effective_chat.id)
+    context.bot_data["subscribers"].add(update.effective_chat.id)
 
     text = f"В этот чат будут отправляться уведомления о статусе ссылок:\n"
     for url in URLS:
