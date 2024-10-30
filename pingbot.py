@@ -74,7 +74,11 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             f"Статусы:\n{status_codes}"
         )
 
-    await context.bot.send_message(chat_id=chat_id, text=text_for_user)
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=text_for_user,
+        disable_web_page_preview=True,
+    )
 
 
 async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -99,7 +103,11 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         text_for_user = f"Вы пока не можете подписаться. Сообщите ID чата {chat_id} администратору."
 
     await alert_owner(context=context, text=text_for_owner)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=text_for_user)
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=text_for_user,
+        disable_web_page_preview=True,
+    )
 
 
 async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -112,7 +120,6 @@ async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=text,
-        disable_web_page_preview=True,
     )
 
 
