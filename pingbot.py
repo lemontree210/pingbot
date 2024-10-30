@@ -1,4 +1,5 @@
 import asyncio
+import atexit
 import os
 import re
 import traceback
@@ -147,9 +148,11 @@ async def _send_shutdown_message(application: Application):
         text="Служебный бот остановлен"
     )
 
-async def post_stop(application: Application):
-    print("stopped")
-    await _send_shutdown_message(application)
+
+def exit_handler():
+    loop = asyncio.get_running_loop()
+    loop.create_task(_send_shutdown_message(application))
+    loop.stop()
 
 
 if __name__ == "__main__":
@@ -171,5 +174,7 @@ if __name__ == "__main__":
     application.add_handler(unsubscribe_handler)
 
     application.add_error_handler(error_handler)
+
+    atexit.register(exit_handler)
 
     application.run_polling()
