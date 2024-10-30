@@ -58,8 +58,8 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     if chat_id not in ACCEPTED_CHAT_IDS:
         text_for_user = (
-            f"Вы не можете получать сообщения о статусе. "
-            f"Сообщите ID чата {chat_id} администратору."
+            "Вы не можете получать сообщения о статусе. "
+            f"Сообщите администратору цифры: {chat_id}."
         )
         await _alert_owner(
             context=context,
@@ -101,7 +101,7 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             text_for_user = f"{text_for_user}\n{url}"
     else:
         text_for_owner += "❌"
-        text_for_user = f"Вы пока не можете подписаться. Сообщите ID чата {chat_id} администратору."
+        text_for_user = f"Вы пока не можете подписаться. Сообщите администратору цифры: {chat_id}."
 
     await _alert_owner(context=context, text=text_for_owner)
     await context.bot.send_message(
