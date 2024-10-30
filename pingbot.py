@@ -10,7 +10,7 @@ import httpx
 import logging
 from dotenv import load_dotenv
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Application
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -134,7 +134,7 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await _alert_owner(context=context, text=tb_string)
 
 
-async def post_stop(application: ApplicationBuilder) -> None:
+async def post_stop(application: Application) -> None:
     await application.bot.send_message(
         chat_id=OWNER_CHAT_ID,
         text="Служебный бот остановлен"
@@ -145,6 +145,12 @@ async def _alert_owner(context: ContextTypes.DEFAULT_TYPE, text: str) -> None:
     await context.bot.send_message(
         chat_id=OWNER_CHAT_ID,
         text=text
+    )
+
+async def _send_shutdown_message(application: Application):
+    await application.bot.send_message(
+        chat_id=OWNER_CHAT_ID,
+        text="Служебный бот остановлен"
     )
 
 
@@ -168,4 +174,9 @@ if __name__ == "__main__":
 
     application.add_error_handler(error_handler)
 
-    application.run_polling()
+    try:
+        application.run_polling()
+    except KeyboardInterrupt:
+        loop = asyncio.get_running_loop()
+        loop.create_task(_send_shutdown_message(application))
+        loop.stop()
