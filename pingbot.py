@@ -121,7 +121,7 @@ if __name__ == '__main__':
     application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     application.bot_data["subscribers"] = set()
 
-    alert_about_start = partial(alert_owner, text=f"Бот запущен {datetime.now()}")
+    alert_about_start = partial(alert_owner, text=f"Служебный бот запущен {datetime.now()}")
     application.job_queue.run_once(alert_about_start, when=0, name="alert_owner")
 
     application.job_queue.run_repeating(ping, interval=600, first=15)
