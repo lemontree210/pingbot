@@ -17,6 +17,7 @@ logging.basicConfig(
 load_dotenv()
 
 
+OWNER_CHAT_ID = int(os.environ.get("OWNER_CHAT_ID"))
 URLS = os.environ.get("URLS").split(", ")
 STATUS = {"timestamp": datetime.now(), "status_codes": {url: None for url in URLS}}
 
@@ -81,7 +82,7 @@ async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     )
 
 
-if __name__ == "__main__":
+async def main() -> None:
     application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     application.bot_data["subscribers"] = set()
     application.job_queue.run_repeating(ping, interval=600, first=15)
@@ -94,5 +95,11 @@ if __name__ == "__main__":
 
     unsubscribe_handler = CommandHandler("unsubscribe", unsubscribe)
     application.add_handler(unsubscribe_handler)
+
+    await application.bot.send_message(
+        chat_id=OWNER_CHAT_ID,
+        text="Ping bot started",
+        parse_mode=None,
+    )
 
     application.run_polling()
