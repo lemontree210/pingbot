@@ -1,6 +1,8 @@
 import asyncio
 import atexit
 import os
+
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 import re
 import traceback
 
@@ -150,13 +152,16 @@ async def _send_shutdown_message(application: Application):
 
 
 def exit_handler():
-    loop = asyncio.get_running_loop()
-    loop.create_task(_send_shutdown_message(application))
-    loop.stop()
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    params = {
+        "chat_id": OWNER_CHAT_ID,
+        "text": "Служебный бот остановлен по внешней причине"
+    }
+    httpx.post(url, json=params)
 
 
 if __name__ == "__main__":
-    application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
+    application = ApplicationBuilder().token(BOT_TOKEN).build()
     application.bot_data["subscribers"] = set()
 
     alert_about_start = partial(_alert_owner, text=f"Служебный бот запущен {datetime.now()}")
