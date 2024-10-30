@@ -12,6 +12,7 @@ import httpx
 import logging
 from dotenv import load_dotenv
 from telegram import Update
+from telegram.constants import ParseMode
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Application
 
 logging.basicConfig(
@@ -142,7 +143,8 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 async def _alert_owner(context: ContextTypes.DEFAULT_TYPE, text: str) -> None:
     await context.bot.send_message(
         chat_id=OWNER_CHAT_ID,
-        text=text
+        text=text,
+        parse_mode=ParseMode.HTML,
     )
 
 
