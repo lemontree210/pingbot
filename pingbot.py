@@ -61,6 +61,11 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             f"Вы не можете получать сообщения о статусе. "
             f"Сообщите ID чата {chat_id} администратору."
         )
+        await alert_owner(
+            context=context,
+            text=f"Пользователь {update.effective_chat.username} ({chat_id=}) "
+                 "запросил статус, было отказано"
+        )
     else:
         status_codes = "\n".join(
             sorted(f"{url}: {STATUS['status_codes'][url]}" for url in STATUS['status_codes'])
