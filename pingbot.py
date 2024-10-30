@@ -134,18 +134,12 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
     await _alert_owner(context=context, text=tb_string)
 
 
-async def post_stop(application: Application) -> None:
-    await application.bot.send_message(
-        chat_id=OWNER_CHAT_ID,
-        text="Служебный бот остановлен"
-    )
-
-
 async def _alert_owner(context: ContextTypes.DEFAULT_TYPE, text: str) -> None:
     await context.bot.send_message(
         chat_id=OWNER_CHAT_ID,
         text=text
     )
+
 
 async def _send_shutdown_message(application: Application):
     await application.bot.send_message(
