@@ -171,6 +171,7 @@ if __name__ == "__main__":
     try:
         application.run_polling()
     except KeyboardInterrupt:
+        print("Interrupted")
         loop = asyncio.get_running_loop()
         loop.create_task(_send_shutdown_message(application))
         loop.stop()
