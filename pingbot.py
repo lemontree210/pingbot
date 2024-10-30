@@ -102,7 +102,7 @@ async def main() -> None:
         parse_mode=None,
     )
 
-    application.run_polling()
+    await application.run_polling()
 
 
 if __name__ == '__main__':
