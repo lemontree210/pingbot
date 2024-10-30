@@ -2,7 +2,6 @@ import asyncio
 import os
 
 from datetime import datetime
-from email.policy import default
 
 import httpx
 import logging
