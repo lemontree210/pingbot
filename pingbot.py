@@ -123,7 +123,7 @@ async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     application.bot_data["subscribers"] = set()
 
