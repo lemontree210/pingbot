@@ -63,8 +63,8 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         await alert_owner(
             context=context,
-            text=f"Пользователь {update.effective_chat.username} ({chat_id=}) "
-                 "запросил статус, было отказано"
+            text=f"Пользователь {update.effective_user.name} ({update.effective_chat.username}, "
+                 f"{chat_id=}) запросил статус, было отказано"
         )
     else:
         status_codes = "\n".join(
