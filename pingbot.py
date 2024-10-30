@@ -147,6 +147,10 @@ async def _send_shutdown_message(application: Application):
         text="Служебный бот остановлен"
     )
 
+async def post_stop(application: Application):
+    print("stopped")
+    await _send_shutdown_message(application)
+
 
 if __name__ == "__main__":
     application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
@@ -168,10 +172,4 @@ if __name__ == "__main__":
 
     application.add_error_handler(error_handler)
 
-    try:
-        application.run_polling()
-    except KeyboardInterrupt:
-        print("Interrupted")
-        loop = asyncio.get_running_loop()
-        loop.create_task(_send_shutdown_message(application))
-        loop.stop()
+    application.run_polling()
