@@ -83,6 +83,8 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
+    raise KeyError("Just a test")
+
     chat_id = update.effective_chat.id
     username = update.effective_user.username
 
@@ -152,6 +154,7 @@ async def _send_shutdown_message(application: Application):
 
 
 def exit_handler():
+    # using direct request to Telegram because application might not exist anymore
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     params = {
         "chat_id": OWNER_CHAT_ID,
@@ -180,6 +183,7 @@ if __name__ == "__main__":
 
     application.add_error_handler(error_handler)
 
+    # for cases like pressing Ctrl+C, PTB functions post_stop() and post_shutdown() won't work
     atexit.register(exit_handler)
 
     application.run_polling()
