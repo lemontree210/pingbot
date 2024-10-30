@@ -84,8 +84,6 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
-    raise KeyError("Just a test")
-
     chat_id = update.effective_chat.id
     username = update.effective_user.username
 
