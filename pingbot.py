@@ -83,7 +83,7 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "хочет подписаться на уведомления: "
     )
 
-    if chat_id not in ACCEPTED_CHAT_IDS:
+    if chat_id in ACCEPTED_CHAT_IDS:
         context.bot_data["subscribers"].add(chat_id)
 
         text_for_owner += "✅"
