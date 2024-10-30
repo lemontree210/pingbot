@@ -64,7 +64,7 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await _alert_owner(
             context=context,
             text=f"Пользователь {update.effective_user.name} ({update.effective_chat.username}, "
-                 f"{chat_id=}) запросил статус, было отказано"
+                 f"chat ID <code>{chat_id}</code>) запросил статус, было отказано"
         )
     else:
         status_codes = "\n".join(
@@ -88,8 +88,8 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     username = update.effective_user.username
 
     text_for_owner = (
-        f"Пользователь {update.effective_user.name} ({username=}, {chat_id=}) "
-        "хочет подписаться на уведомления: "
+        f"Пользователь {update.effective_user.name} ({username=}, "
+        f"chat ID <code>{chat_id}</code>) хочет подписаться на уведомления: "
     )
 
     if chat_id in ACCEPTED_CHAT_IDS:
