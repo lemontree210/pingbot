@@ -1,5 +1,7 @@
 import asyncio
 import os
+import re
+import traceback
 
 from datetime import datetime
 from functools import partial
@@ -19,16 +21,11 @@ load_dotenv()
 
 
 ACCEPTED_CHAT_IDS = {int(chat_id) for chat_id in os.environ.get("ACCEPTED_CHAT_IDS").split(", ")}
+EXCEPTION_TRACEBACK_CLEANUP_PATTERN = re.compile(r"File .+/")  # it is intended to be greedy
+"""Pattern to remove the long 'File:/path/to/file/' portion, but leave the file name."""
 OWNER_CHAT_ID = os.environ.get("OWNER_CHAT_ID")
 URLS = os.environ.get("URLS").split(", ")
 STATUS = {"timestamp": datetime.now(), "status_codes": {url: None for url in URLS}}
-
-
-async def alert_owner(context: ContextTypes.DEFAULT_TYPE, text: str) -> None:
-    await context.bot.send_message(
-        chat_id=OWNER_CHAT_ID,
-        text=text
-    )
 
 
 async def ping(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -60,7 +57,7 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             f"Вы не можете получать сообщения о статусе. "
             f"Сообщите ID чата {chat_id} администратору."
         )
-        await alert_owner(
+        await _alert_owner(
             context=context,
             text=f"Пользователь {update.effective_user.name} ({update.effective_chat.username}, "
                  f"{chat_id=}) запросил статус, было отказано"
@@ -102,7 +99,7 @@ async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         text_for_owner += "❌"
         text_for_user = f"Вы пока не можете подписаться. Сообщите ID чата {chat_id} администратору."
 
-    await alert_owner(context=context, text=text_for_owner)
+    await _alert_owner(context=context, text=text_for_owner)
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=text_for_user,
@@ -123,11 +120,32 @@ async def unsubscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     )
 
 
+async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+    tb_list = traceback.format_exception(None, context.error, context.error.__traceback__)
+
+    tb_string = "".join(
+        EXCEPTION_TRACEBACK_CLEANUP_PATTERN.sub("", item)
+        for item in tb_list
+        if "/virtualenvs/" not in item  # don't show traceback lines from external modules
+    )
+    tb_string = f"<code>{tb_string}</code>"
+
+    await _alert_owner(context=context, text=tb_string)
+
+
+async def _alert_owner(context: ContextTypes.DEFAULT_TYPE, text: str) -> None:
+    await context.bot.send_message(
+        chat_id=OWNER_CHAT_ID,
+        text=text
+    )
+
+
 if __name__ == "__main__":
     application = ApplicationBuilder().token(os.environ.get("BOT_TOKEN")).build()
     application.bot_data["subscribers"] = set()
 
-    alert_about_start = partial(alert_owner, text=f"Служебный бот запущен {datetime.now()}")
+    alert_about_start = partial(_alert_owner, text=f"Служебный бот запущен {datetime.now()}")
     application.job_queue.run_once(alert_about_start, when=0, name="alert_owner")
 
     application.job_queue.run_repeating(ping, interval=600, first=15)
@@ -140,5 +158,7 @@ if __name__ == "__main__":
 
     unsubscribe_handler = CommandHandler("unsubscribe", unsubscribe)
     application.add_handler(unsubscribe_handler)
+
+    application.add_error_handler(error_handler)
 
     application.run_polling()
