@@ -2,7 +2,6 @@ import asyncio
 import atexit
 import os
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
 import re
 import traceback
 
@@ -24,6 +23,7 @@ load_dotenv()
 
 
 ACCEPTED_CHAT_IDS = {int(chat_id) for chat_id in os.environ.get("ACCEPTED_CHAT_IDS").split(", ")}
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 EXCEPTION_TRACEBACK_CLEANUP_PATTERN = re.compile(r"File .+/")  # it is intended to be greedy
 """Pattern to remove the long 'File:/path/to/file/' portion, but leave the file name."""
 OWNER_CHAT_ID = os.environ.get("OWNER_CHAT_ID")
