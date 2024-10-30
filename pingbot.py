@@ -18,8 +18,7 @@ logging.basicConfig(
 load_dotenv()
 
 
-# no conversion to int here, because otherwise membership check won't work
-ACCEPTED_CHAT_IDS = {chat_id for chat_id in os.environ.get("ACCEPTED_CHAT_IDS").split(", ")}
+ACCEPTED_CHAT_IDS = {int(chat_id) for chat_id in os.environ.get("ACCEPTED_CHAT_IDS").split(", ")}
 OWNER_CHAT_ID = os.environ.get("OWNER_CHAT_ID")
 URLS = os.environ.get("URLS").split(", ")
 STATUS = {"timestamp": datetime.now(), "status_codes": {url: None for url in URLS}}
